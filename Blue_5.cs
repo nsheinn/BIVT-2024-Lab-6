@@ -9,7 +9,7 @@ public class Blue_5
     {
         private string _name;
         private string _surname;
-        private int _place = -1;
+        private int _place = 0;
         
         public string Name => _name;
         public string Surname => _surname;
@@ -24,7 +24,7 @@ public class Blue_5
         public void SetPlace(int place)
         {
             if (place <= 0) return;
-            if (_place == -1) _place = place;
+            if (_place == 0) _place = place;
         }
 
         public void Print()
@@ -37,7 +37,7 @@ public class Blue_5
     {
         private string _name;
         private Sportsman[] _sportsmen;
-        
+        private int _index = 0;
         public string Name => _name;
 
         public Sportsman[] Sportsmen => _sportsmen;
@@ -74,32 +74,32 @@ public class Blue_5
                 if (_sportsmen == null) return 0;
                 int max = int.MaxValue;
                 foreach (var x in _sportsmen) if (x.Place != 0) max = Math.Min(max, x.Place);
-                return max;
+                return max == int.MaxValue ? 0 : max;
             }
         }
 
         public Team(string name)
         {
             _name = name;
-            _sportsmen = new Sportsman[0];
+            _sportsmen = new Sportsman[6];
         }
 
         public void Add(Sportsman sportsman)
         {
             if (_sportsmen == null) return;
-            Sportsman[] array = new Sportsman[_sportsmen.Length + 1];
-            Array.Copy(_sportsmen, array, _sportsmen.Length);
-            array[_sportsmen.Length] = sportsman;
-            _sportsmen = array;
+            if (_index < _sportsmen.Length)
+            {
+                _sportsmen[_index] = sportsman;
+                _index++;
+            }
         }
 
         public void Add(Sportsman[] sportsmen)
         {
             if (sportsmen == null || _sportsmen == null || sportsmen.Length == 0) return;
-            Sportsman[] array = new Sportsman[_sportsmen.Length + sportsmen.Length];
-            Array.Copy(_sportsmen, array, _sportsmen.Length);
-            Array.Copy(sportsmen, 0, array, _sportsmen.Length, sportsmen.Length);
-            _sportsmen = array;
+            int addCount = Math.Min(_sportsmen.Length - _index, sportsmen.Length);
+            Array.Copy(sportsmen, 0, _sportsmen, _index, addCount);
+            _index += addCount;
         }
 
         public static void Sort(Team[] teams)

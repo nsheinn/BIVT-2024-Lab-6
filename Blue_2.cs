@@ -14,7 +14,7 @@ public class Blue_2
         private string _name;
         private string _surname;
         private int[,] _marks;
-        private int _jumpIndex = 0;
+        private int _jumpIndex;
 
 
         public string Name => _name;
@@ -24,11 +24,9 @@ public class Blue_2
         {
             get
             {
-                int[,] copy = new int[2, 5];
-                if (_marks == null || _marks.GetLength(0) == 0 || _marks.GetLength(1) == 0) return null;
-                for (int i = 0; i < _marks.GetLength(0); i++)
-                    for (int j = 0; j < _marks.GetLength(1); j++) 
-                        copy[i, j] = _marks[i, j];
+                if (_marks == null) return new int[0, 0];
+                int[,] copy = new int[_marks.GetLength(0), _marks.GetLength(1)];
+                Array.Copy(_marks, copy, _marks.Length);
                 return copy;
             }
         }
@@ -48,13 +46,15 @@ public class Blue_2
             _name = name; 
             _surname = surname;
             _marks = new int[2, 5];
+            _jumpIndex = 0;
         }
 
         public void Jump(int[] result)
         {
-            if (_marks == null || _marks.GetLength(0) == 0 || _marks.GetLength(1) == 0 || result.Length == 0) return;
-            if (result == null || _jumpIndex > 1) return;
-            for (int i = 0; i < result.Length; i++)
+            if (_marks == null || _marks.GetLength(0) == 0 || _marks.GetLength(1) == 0 || result == null) return;
+            if (result.Length == 0 || _jumpIndex > 1 || _jumpIndex < 0) return;
+            int count = Math.Min(5, result.Length);
+            for (int i = 0; i < count; i++)
             {
                 _marks[_jumpIndex, i] = result[i];
             }
@@ -63,16 +63,18 @@ public class Blue_2
 
         public static void Sort(Participant[] array)
         {
-            if (array == null || array.Length == 0) return;
-            for (int i = 0; i < array.Length; i++)
+            if (array == null || array.Length < 2) return;
+
+            for (int i = 1; i < array.Length; i++)
             {
-                for (int j = 0; j < array.Length - i - 1; j++)
+                var current = array[i];
+                int j = i - 1;
+                while (j >= 0 && array[j].TotalScore < current.TotalScore)
                 {
-                    if (array[j].TotalScore < array[j + 1].TotalScore)
-                    {
-                        (array[j], array[j + 1]) = (array[j + 1], array[j]);
-                    };
+                    array[j + 1] = array[j];
+                    j--;
                 }
+                array[j + 1] = current;
             }
         }
             

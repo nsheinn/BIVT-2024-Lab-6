@@ -69,70 +69,65 @@ public class Blue_4
 
         public void Add(Team team)
         {
-            if (_teams == null) _teams = new Team[0];
-            if (_teams.Length == 12) return;
-            Team[] newTeams = new Team[_teams.Length + 1];
-            Array.Copy(_teams, newTeams, _teams.Length);
-            newTeams[_teams.Length] = team;
-            _teams = newTeams;
+            if (_teams.Length >= 12) return;
+            Array.Resize(ref _teams, _teams.Length + 1);
+            _teams[^1] = team;
         }
         public void Add(Team[] teams)
         {
             if (_teams.Length == 12 || teams.Length == 0) return;
-            Team[] newTeams = new Team[Math.Min(12, _teams.Length + teams.Length)];
-            Array.Copy(_teams, newTeams, _teams.Length);
-            Array.Copy(teams, 0, newTeams, _teams.Length, Math.Min(12 - _teams.Length, teams.Length));
-            _teams = newTeams;
+            int addCount = Math.Min(12 - _teams.Length, teams.Length);
+            if (addCount <= 0) return;
+    
+            Array.Resize(ref _teams, _teams.Length + addCount);
+            Array.Copy(teams, 0, _teams, _teams.Length - addCount, addCount);
         }
 
         public void Sort()
         {
             if (_teams == null) return;
-            for (int i = 0; i < _teams.Length; i++)
+            for (int i = 1; i < _teams.Length; i++)
             {
-                for (int j = 0; j < _teams.Length - i - 1; j++)
+                var current = _teams[i];
+                int j = i - 1;
+                while (j >= 0 && _teams[j].TotalScore < current.TotalScore)
                 {
-                    if (_teams[j].TotalScore < _teams[j + 1].TotalScore)
-                        (_teams[j], _teams[j + 1]) = (_teams[j + 1], _teams[j]);
+                    _teams[j + 1] = _teams[j];
+                    j--;
                 }
+                _teams[j + 1] = current;
             }
         }
 
         public static Group Merge(Group group1, Group group2, int size)
         {
-            Group newGroup = new Group("Финалисты");
-            int k = 0, index1 = 0, index2 = 0;
-            while (k < size && index1 < group1.Teams.Length && index2 < group2.Teams.Length)
+            group1.Sort();
+            group2.Sort();
+    
+            Group result = new Group("Финалисты");
+            int i = 0, j = 0;
+    
+            while (result.Teams.Length < size && i < group1.Teams.Length && j < group2.Teams.Length)
             {
-                if (group1.Teams[index1].TotalScore > group2.Teams[index2].TotalScore)
+                if (group1.Teams[i].TotalScore >= group2.Teams[j].TotalScore)
                 {
-                    newGroup.Add(group1.Teams[index1]);
-                    index1++;
+                    result.Add(group1.Teams[i++]);
                 }
                 else
                 {
-                    newGroup.Add(group2.Teams[index2]);
-                    index2++;
+                    result.Add(group2.Teams[j++]);
                 }
-                k++;
             }
+    
+            while (result.Teams.Length < size && i < group1.Teams.Length)
+                result.Add(group1.Teams[i++]);
+    
+            while (result.Teams.Length < size && j < group2.Teams.Length)
+                result.Add(group2.Teams[j++]);
 
-            while (k < size && index1 < group1.Teams.Length)
-            {
-                newGroup.Add(group1.Teams[index1]);
-                index1++;
-                k++;
-            }
-
-            while (k < size && index2 < group2.Teams.Length)
-            {
-                newGroup.Add(group2.Teams[index2]);
-                index2++;
-                k++;
-            }
-            
-            return newGroup;
+            return result;
         }
+
 
         public void Print()
         {

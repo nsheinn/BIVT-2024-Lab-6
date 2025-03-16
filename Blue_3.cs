@@ -9,6 +9,7 @@ public class Blue_3
 {
     public struct Participant
     {
+        
         private string _name;
         private string _surname;
         private int[] _penaltyTimes;
