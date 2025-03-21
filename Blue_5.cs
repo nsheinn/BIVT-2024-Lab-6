@@ -74,7 +74,7 @@ public class Blue_5
                 if (_sportsmen == null) return 0;
                 int max = int.MaxValue;
                 foreach (var x in _sportsmen) if (x.Place != 0) max = Math.Min(max, x.Place);
-                return max == int.MaxValue ? 0 : max;
+                return max == int.MaxValue ? 18 : max;
             }
         }
 

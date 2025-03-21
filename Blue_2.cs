@@ -24,7 +24,7 @@ public class Blue_2
         {
             get
             {
-                if (_marks == null) return new int[0, 0];
+                if (_marks == null || _marks.GetLength(0) == 0 || _marks.GetLength(1) == 0) return null;
                 int[,] copy = new int[_marks.GetLength(0), _marks.GetLength(1)];
                 Array.Copy(_marks, copy, _marks.Length);
                 return copy;
