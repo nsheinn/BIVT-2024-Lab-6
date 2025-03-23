@@ -59,8 +59,9 @@ public class Blue_4
     {
         private string _name;
         private Team[] _teams;
+        private int _teamIndex = 0;
+        
         public string Name => _name;
-        public int _teamIndex = 0;
         public Team[] Teams => _teams;
         public Group(string name)
         {
